@@ -1,2 +1,0 @@
-Die Test Datei ist nur ein Versuch der nicht geklappt hat
-Die Test2 Datei ist die Main
