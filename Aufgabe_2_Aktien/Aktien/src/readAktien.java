@@ -58,7 +58,7 @@ public class readAktien {
         Connection conn = null;
         try {
             // db parameters
-            String url = "jdbc:sqlite:C:\\Users\\sebas\\IdeaProjects\\Aktien\\"+s+".db";
+            String url = "jdbc:sqlite:C:\\Users\\sebas\\IdeaProjects\\Aktien\\Aktien.db";
             // create a connection to the database
             conn = DriverManager.getConnection(url);
 
@@ -77,10 +77,10 @@ public class readAktien {
         }
     }public static void createNewTable() {
         // SQLite connection string
-        String url = "jdbc:sqlite:C:\\Users\\sebas\\IdeaProjects\\Aktien\\"+s+".db";
+        String url = "jdbc:sqlite:C:\\Users\\sebas\\IdeaProjects\\Aktien\\Aktien.db";
 
         // SQL statement for creating a new table
-        String sql = "CREATE TABLE IF NOT EXISTS Feiertage("
+        String sql = "CREATE TABLE IF NOT EXISTS "+s+"("
                 + "Datum text,\n"
                 + "Close Double );"
                 ;
@@ -94,7 +94,7 @@ public class readAktien {
             System.out.println(e.getMessage());
         }
     }private Connection connection() {
-        String url = "jdbc:sqlite:C:\\Users\\sebas\\IdeaProjects\\Aktien\\"+s+".db";
+        String url = "jdbc:sqlite:C:\\Users\\sebas\\IdeaProjects\\Aktien\\Aktien.db";
         Connection conn = null;
         try {
             conn = DriverManager.getConnection(url);
@@ -103,7 +103,7 @@ public class readAktien {
         }
         return conn;
     }public  void insert() {
-        String sql = "INSERT INTO Feiertage(Datum,Close) VALUES(?,?)";
+        String sql = "INSERT INTO "+s+"(Datum,Close) VALUES(?,?)";
 
         try{ Connection conn = this.connection();
 
@@ -123,7 +123,7 @@ public class readAktien {
         }
     }public   void selectAll(){
         System.out.println("lul");
-        String sql = "SELECT * FROM Feiertage ";
+        String sql = "SELECT * FROM "+s+" ";
 
         try {
             Connection conn = this.connection();
@@ -134,7 +134,7 @@ public class readAktien {
             while (rs.next()) {
                 System.out.println("Datum               Close");
                 System.out.println(
-                        rs.getString("Datum") + "\t \t \t " +
+                                rs.getString("Datum") + "\t \t \t " +
                                 rs.getDouble("Close") + "\t \t \t") ;
             }
         } catch (SQLException e) {
