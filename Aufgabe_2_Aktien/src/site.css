@@ -1,13 +1,13 @@
 .chart {
     -fx-padding: 10px;
-    -fx-background--colour: Black;
+    -fx-background--colour: Red;
 }
 .chart-content {
     -fx-padding: 30px;
 }
 
 .chart-title {
-  -fx-text-fill: #4682b4;
+  -fx-text-fill: red;
   -fx-font-size: 1.6em;
 }
 
@@ -32,16 +32,21 @@
 }
 
 .chart-plot-background {
-    -fx-background-color: #000000;
+    -fx-background-color: green;
 }
 .chart-vertical-grid-lines {
-    -fx-stroke: #000000;
+    -fx-stroke: transparent;
 }
 .chart-horizontal-grid-lines {
-    -fx-stroke: #000000;
+    -fx-stroke: transparent;
 }
 .chart-alternative-row-fill {
     -fx-fill: transparent;
     -fx-stroke: transparent;
     -fx-stroke-width: 0;
 }
+
+.default-color0.chart-series-line{-fx-stroke: black}
+.default-color1.chart-series-line{-fx-stroke: white}
+.default-color0.chart-line-symbol { -fx-background-color: black, black; }
+.default-color1.chart-line-symbol { -fx-background-color: black, white; }

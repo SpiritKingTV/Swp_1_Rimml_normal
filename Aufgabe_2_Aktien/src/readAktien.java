@@ -41,7 +41,7 @@ import javafx.application.Application;
 import javax.sound.sampled.Line;
 
 public class readAktien extends Application {
-    static String s;
+    static String Stock;
     static List<LocalDate> dateList = new ArrayList<>();
     static ArrayList<Double> closeWerte = new ArrayList<>();
     static ArrayList<Double> durchschnitt = new ArrayList<>();
@@ -51,10 +51,9 @@ public class readAktien extends Application {
     public static void main(String[] args) throws IOException, JSONException {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Geben Sie die Firma ein die Sie auslesen wollen: [AAPL,TSLA,IBM,AMZN]");
+        Stock = scanner.next();
 
-        s = scanner.next();
-
-        String URL = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=" + s + "&outputsize=full&apikey=A4RM4YPCEWJ1VANI3";
+        String URL = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=" + Stock + "&outputsize=full&apikey=A4RM4YPCEWJ1VANI3";
 
         getAktienwert2(URL);
         System.out.println(dateList);
@@ -66,6 +65,7 @@ public class readAktien extends Application {
         p1.selectAll();
         avgBerechnen();
         Application.launch(args);
+
 
 
 
@@ -139,7 +139,7 @@ public class readAktien extends Application {
         String url = "jdbc:sqlite:C:\\Users\\Anwender\\IdeaProjects\\Aufgabe_2_Aktien\\Aktien.db";
 
         // SQL statement for creating a new table
-        String sql = "CREATE TABLE IF NOT EXISTS "+s+"("
+        String sql = "CREATE TABLE IF NOT EXISTS "+Stock+"("
                 + "Datum text PRIMARY KEY,\n"
                 + "Close Double );"
                 ;
@@ -166,7 +166,7 @@ public class readAktien extends Application {
     }
 
     public  void insert() {
-        String sql = "REPLACE INTO "+s+"(Datum,Close) VALUES(?,?)";
+        String sql = "REPLACE INTO "+Stock+"(Datum,Close) VALUES(?,?)";
 
         try{ Connection conn = this.connection();
 
@@ -188,7 +188,7 @@ public class readAktien extends Application {
 
     public   void selectAll(){
         System.out.println("Hier ist der Fehler Zeile ~194");
-        String sql = "SELECT * FROM "+s+" ORDER BY Datum ASC";
+        String sql = "SELECT * FROM "+Stock+" ORDER BY Datum ASC";
 
 
         try {
@@ -225,14 +225,14 @@ public class readAktien extends Application {
 
             // Anlegen der BarChart und angabe wie die Anordnung
             final LineChart<String, Number> lineChart = new LineChart<String,Number>(xAxis, yAxis);
-            lineChart.setTitle("Aktienkurs von " +s);
+            lineChart.setTitle("Aktienkurs von " +Stock);
             xAxis.setLabel("Datum ");
             yAxis.setLabel("CloseWerte");
 
 
             XYChart.Series<String,Number> CloseWerte = new XYChart.Series();
 
-            for (int i=0; i<closeWerteDB.size() -1; i++) {
+            for (int i=0; i<closeWerteDB.size() -1 ; i++) {
                 CloseWerte.getData().add(new XYChart.Data(DatumDB.get(i),closeWerteDB.get(i)));
             }
             XYChart.Series<String, Number> AVG = new XYChart.Series();
@@ -249,20 +249,25 @@ public class readAktien extends Application {
 
         for (int i=0; i<closeWerteDB.size();i++) {
             if (closeWerteDB.get(i) > durchschnitt.get(i)) {
-                CloseWerte.getNode().setStyle("-fx-stroke: #6495ED;");
-                AVG.getNode().setStyle("-fx-stroke: #EE7600;");
+                scene.getStylesheets().add("site.css");
 
             }
                 if(closeWerteDB.get(i) < durchschnitt.get(i)){
-                    CloseWerte.getNode().setStyle("-fx-stroke: #EE7600;");
-                    AVG.getNode().setStyle("-fx-stroke: #6495ED;");
+                    scene.getStylesheets().add("site2.css");
 
             }
         }
+       // Collections.reverse(closeWerteDB);
+            yAxis.setAutoRanging(false);
+            double AbstandOBEN = Collections.max(closeWerteDB);
+            double AbstandUNTEN = Collections.min(closeWerteDB);
+
+            yAxis.setLowerBound(AbstandUNTEN-20);
+            yAxis.setUpperBound(AbstandOBEN+20);
             CloseWerte.setName("CloseWerte");
             AVG.setName("AVG");
 
-            scene.getStylesheets().add("site.css");
+
             primaryStage.setScene(scene);
 
             primaryStage.show();
