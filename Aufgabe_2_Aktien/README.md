@@ -10,4 +10,4 @@ Am Anfang des Programmes wird eine Abfrage des gewünschten Unternehmens stattfi
 Was muss man beachten wenn man eine Library einbindet?
 Dieses Tutorial wird helfen:
 https://www.jetbrains.com/help/idea/library.html#define-library <br>
-Die site.css Datei wird nicht unbedingt benötigt sie verschöner nur meiner Meinung nach den Line-Chart.
+Die bieden css Files sind verantwrtlich um den Grapfen eine bestimmte Hintergrundfarbe zu geben. Wenn der Aktienkurs über dem 200 Schnitt steht soll er Grün werden. Wenn der AKtienkurs darunter ist rot.
