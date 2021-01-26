@@ -3,7 +3,7 @@ Das Programm dient dazu aus einer JSON von Alphavantage die Schließungen der Ak
 Am Anfang des Programmes wird eine Abfrage des gewünschten Unternehmens stattfinden. Diese beantwortet man mit der erwünschten Abkürzung:<br>1. Apple...AAPL <br> 2. Amazon...AMZN<br> 3. Tesla...TSLA<br>4. International Business Machines Corporation...IBM<br><br>Zum Starten benötigt man:<br>1.commons-io-2.7.jar <br>2.java.json.jar  <br> 3.sqlite-jdbx-3.32.3.2.jar<br> 4.javafx-libary:https://gluonhq.com/products/javafx/<br>
 
 ![image](https://github.com/NoxusDarius/Swp_1_Rimml_normal/blob/master/Aufgabe_2_Aktien/skizzeAAPL.PNG)
-![image](https://user-images.githubusercontent.com/59960768/102935283-2327c180-44a6-11eb-8a7c-5646c11675c3.png)
+![image](https://github.com/NoxusDarius/Swp_1_Rimml_normal/blob/master/Aufgabe_2_Aktien/skizzeTSLA.PNG)
 
 
 
