@@ -267,7 +267,7 @@ public class readAktien extends Application {
             CloseWerte.setName("CloseWerte");
             AVG.setName("AVG");
 
-
+           
             primaryStage.setScene(scene);
 
             primaryStage.show();
