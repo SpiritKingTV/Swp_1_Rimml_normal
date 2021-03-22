@@ -5,18 +5,15 @@ import java.nio.charset.Charset;
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.*;
-
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.chart.*;
 import javafx.scene.image.WritableImage;
-import javafx.scene.layout.Pane;
 import org.apache.commons.io.IOUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.application.Application;
-
 import javax.imageio.ImageIO;
 import java.io.File;
 
@@ -29,10 +26,13 @@ public class readAktien extends Application  {
     static ArrayList<Double> durchschnitt = new ArrayList<>();
     static ArrayList<Double> closeWerteDB = new ArrayList<>();
     static ArrayList<String> DatumDB = new ArrayList<>();
-    Scanner scanner = new Scanner(System.in);
 
-    //public static void main(String[] args) throws IOException, JSONException {
+    public static String DBurl = "jdbc:mysql://localhost:3306/db_Aktien?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC";
+    static Statement myStmt;
+    public static Connection connection;
 
+
+    public static void main(String[] args) throws IOException, JSONException {
 
 
         /*for( int i=0; i<c.dataCompanies.length; i++) {
@@ -58,14 +58,15 @@ public class readAktien extends Application  {
         }
 
 */
-       // Application.launch(args);
-
+        Application.launch(args);
+    }
 
 
     private static void getAktienwert2(String URL) throws JSONException, IOException {
         JSONObject json = Aktieneinlesen(URL);
 
         json = json.getJSONObject("Time Series (Daily)");
+        System.out.println(URL);
         for (int i=0; i<json.names().length(); i++) {
             dateList.add(LocalDate.parse((CharSequence) json.names().get(i)));
             closeWerte.add(json.getJSONObject(LocalDate.parse((CharSequence)json.names().get(i)).toString()).getDouble("4. close"));
@@ -99,111 +100,71 @@ public class readAktien extends Application  {
         }
 
     }
-
-    public static void connect() {
-        Connection conn = null;
-        try {
-            // db parameters
-            String url = "jdbc:sqlite:C:\\Users\\Anwender\\IdeaProjects\\Aufgabe_2_Aktien\\Aktien.db";
-            // create a connection to the database
-            conn = DriverManager.getConnection(url);
-
-            System.out.println("Connection to SQLite has been established.");
-
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        } finally {
+    static boolean connectToMySql() throws SQLException {
+        {
             try {
-                if (conn != null) {
-                    conn.close();
-                }
-            } catch (SQLException ex) {
-                System.out.println(ex.getMessage());
+                connection = DriverManager.getConnection(DBurl, "root", "Airbase11");
+                myStmt = connection.createStatement();
+                System.out.println("Datenbank verknüpft");
+                return true;
+            } catch (SQLException e) {
+                System.out.println("Datenbank wurde nicht verknüpft");
+                e.printStackTrace();
             }
+            return false;
         }
     }
 
-    public static void createNewTable() {
-        // SQLite connection string
-        String url = "jdbc:sqlite:C:\\Users\\Anwender\\IdeaProjects\\Aufgabe_2_Aktien\\Aktien.db";
-
-        // SQL statement for creating a new table
-        String sql = "CREATE TABLE IF NOT EXISTS "+Stock+"("
-                + "Datum text PRIMARY KEY,\n"
-                + "Close Double );"
-                ;
-
-
+    static boolean createTable() throws SQLException {
         try{
-            Connection conn = DriverManager.getConnection(url);
-            Statement stmt = conn.createStatement();
-            stmt.execute(sql);
+            myStmt = connection.createStatement();
+            String createtable = "create table if not exists "+Stock+" (datum varchar(255) primary key, close double);";
+            //String createtableAVG = "create table if not exists "+Stock+"AVG (datumAVG varchar(255) primary key, avg double);";
+            myStmt.executeUpdate(createtable);
+          //  myStmt.executeUpdate(createtableAVG);
+            return true;
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
         }
+        return false;
     }
-
-    private Connection connection() {
-        String url = "jdbc:sqlite:C:\\Users\\Anwender\\IdeaProjects\\Aufgabe_2_Aktien\\Aktien.db";
-        Connection conn = null;
+    static void writeDataInDB(){
         try {
-            conn = DriverManager.getConnection(url);
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-        return conn;
-    }
-
-    public  void insert() {
-        String sql = "REPLACE INTO "+Stock+"(Datum,Close) VALUES(?,?)";
-
-        try{ Connection conn = this.connection();
-
-            PreparedStatement pstmt = conn.prepareStatement(sql);
-            for(int i=0; i< dateList.size(); i++) {
-
-                pstmt.setString(1, dateList.get(i).toString());
-                pstmt.setDouble(2, closeWerte.get(i));
-
-
-
-                pstmt.executeUpdate();
+            myStmt = connection.createStatement();
+            for(int i = 0; i < dateList.size(); i++) {
+                String writeData = "insert ignore into " + Stock + " (datum, close) values('" + dateList.get(i) + "', '" + closeWerte.get(i) + "');";
+                myStmt.executeUpdate(writeData);
             }
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-            System.out.println("Hier ist der Fehler Zeile ~189");
+            System.out.println("Datensatz eingetragen");
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
-
-    public   void selectAll(){
-
-        String sql = "SELECT * FROM "+Stock+" ORDER BY Datum ASC";
-
-
+    public static void getData() {
         try {
-            Connection conn = this.connection();
-            Statement stmt  = conn.createStatement();
-            ResultSet rs    = stmt.executeQuery(sql);
+            Statement myStmt = connection.createStatement();
 
 
+            ResultSet rsNormal = myStmt.executeQuery( "SELECT * from " + Stock + " order by datum");
 
-            while (rs.next()) {
-              /*  System.out.println("Datum               Close");
+            System.out.println("Datum               Close Werte           ");
+            while (rsNormal.next()) {
                 System.out.println(
-                                rs.getString("Datum") + "\t \t \t " +
-                                rs.getDouble("Close") + "\t \t \t") ;*/
-               closeWerteDB.add(rs.getDouble("Close"));
-               DatumDB.add( rs.getString("Datum"));
-
-
+                        rsNormal.getString("datum") + "\t \t \t \t" +
+                                rsNormal.getDouble("close") + "\t \t \t \t"
+                                );
+                System.out.println("Stock=" + Stock);
+                DatumDB.add(rsNormal.getString("datum"));
+                closeWerteDB.add(rsNormal.getDouble("close"));
             }
-
-                    } catch (SQLException e) {
-            System.out.println(e.getMessage());
-            System.out.println("Hier ist der Fehler Zeile ~218");
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
+
     }
+
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -225,16 +186,19 @@ public class readAktien extends Application  {
 
                 Stock = c.dataCompanies[firma];
 
-                String URL = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=" + c.dataCompanies[firma] + "&outputsize=full&apikey=A4RM4YPCEWJ1VANI3";
+                String URL = "https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=" + Stock + "&outputsize=full&apikey=A4RM4YPCEWJ1VANI3";
 
                 getAktienwert2(URL);
                 //  System.out.println(dateList);
                 // System.out.println(closeWerte);
                 readAktien p1 = new readAktien();
-                p1.connect();
-                p1.createNewTable();
-                p1.insert();
-                p1.selectAll();
+                p1.connectToMySql();
+                p1.createTable();
+                p1.writeDataInDB();
+
+                p1.getData();
+
+
                 avgBerechnen();
                 //Angaben wie die Axen sein sollten
                 final NumberAxis yAxis = new NumberAxis();
@@ -286,6 +250,11 @@ public class readAktien extends Application  {
                 primaryStage.setScene(scene);
                 primaryStage.show();
 
+                closeWerte.clear();
+                dateList.clear();
+                DatumDB.clear();
+                closeWerteDB.clear();
+                durchschnitt.clear();
 
                 file = new File("C:\\Users\\Anwender\\IdeaProjects\\Aufgabe_2_Aktien\\PNG\\"+Stock+LocalDate.now()+".png");
                 WritableImage writableImage = new WritableImage((int)lineChart.getWidth() + 400,(int)lineChart.getHeight() + 400);
@@ -294,6 +263,7 @@ public class readAktien extends Application  {
                         null);
                 ImageIO.write(rImage, "png", file);
                primaryStage.close();
+
 
             }
         }catch (Exception e) {
