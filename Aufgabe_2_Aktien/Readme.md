@@ -32,6 +32,8 @@ Was macht das Programm im Detail?
 Es liest die Close Werte (adjusted CLose Werte wegen split correction) ein und speichert diese in einer Datenbank ab. Aus diesen Werten in der Datenbank wird nun der 200 Durchschnitt gebildet.
 Nun zeichnet das Programm mithilfe von javaFX und den zwei Linien (die Close Werte, die Durchschnittswerte) einen Graphen. Dieser Graphen verändert die Hintergrundfarbe je nach AKtie.
 Wenn der letzte Durchschnitt über dem letzten Close Wert liegt bekommt der Graph einen Roten Hintergrund. WEnn der Durchschnitt darunter liegt einen Grünen.
-![GME2021-04-05](https://user-images.githubusercontent.com/59960768/113630860-de94f000-9668-11eb-8b31-9cacbd518d2e.png)
+
 ![AMZN2021-04-05](https://user-images.githubusercontent.com/59960768/113630889-e9e81b80-9668-11eb-8684-7f1d314597f0.png)
-![CBOE2021-04-05](https://user-images.githubusercontent.com/59960768/113630936-f8cece00-9668-11eb-929e-db839c6e78cd.png)
+![AMD2021-04-05](https://user-images.githubusercontent.com/59960768/113631878-69c2b580-966a-11eb-845e-dc571d9258b8.png)
+
+
